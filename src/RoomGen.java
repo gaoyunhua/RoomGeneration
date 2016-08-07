@@ -63,16 +63,23 @@ public class RoomGen {
 		int r = (int) Math.ceil(Math.random()*2);
 		
 		
-		if (b.getLX() < 100 || b.getLY() < 100) {
+		if (b.getLX() < 160 && b.getLY() < 160) {
 			list_finished.add(b);
 			return b;
 		} else {
+			
+			if(b.getLX() < 160 && b.getLY() > 160){
+				r = 1;
+			}else if(b.getLX() > 160 && b.getLY() < 160){
+				r = 2;
+			}
+			
 			switch (r) {
 
 			// horizontal line
 			case 1:
 
-				int y = (int) (Math.random() * (b.getLY()-10))+10;
+				int y = (int) (Math.random() * (b.getLY()-20))+10;
 		
 				Block blockU = new Block(b.getX(), b.getY(), b.getLX(),
 						y);
@@ -89,7 +96,7 @@ public class RoomGen {
 				// vertical line
 			case 2:
 
-				int x = (int) (Math.random() * (b.getLX()-10))+10;
+				int x = (int) (Math.random() * (b.getLX()-20))+10;
 				
 				Block blockL = new Block(b.getX(), b.getY(), x,
 						b.getLY());

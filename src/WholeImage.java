@@ -15,7 +15,7 @@ public class WholeImage extends JPanel {
 			 RoomGen.split(RoomGen.list_unfinished.get(i));
  		 }
 
-		 RoomGen.createCorridors();
+	//	 RoomGen.createCorridors();
 		 
 //		 for(int i = 0;i<RoomGen.list_finished.size();i++){
 //			 Room r = new Room(RoomGen.list_finished.get(i));
