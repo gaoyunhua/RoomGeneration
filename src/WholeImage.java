@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
@@ -15,23 +16,34 @@ public class WholeImage extends JPanel {
 			 RoomGen.split(RoomGen.list_unfinished.get(i));
  		 }
 
-	//	 RoomGen.createCorridors();
+		 RoomGen.createCorridors();
 		 
-//		 for(int i = 0;i<RoomGen.list_finished.size();i++){
-//			 Room r = new Room(RoomGen.list_finished.get(i));
-//			 System.out.println(r.chooseType());
-//		 }
+		 for(int i = 0;i<RoomGen.list_finished.size();i++){
+			 RoomGen.list_finished.get(i).chooseType();
+		 }
+		 
 
 	}
     public void paintComponent(Graphics g) {
         super.paintComponent(g);  // fixes the immediate problem.
         Graphics2D g2 = (Graphics2D) g;
-
-        for(int i=0;i<RoomGen.lines.size();i++){
-        	g2.draw(RoomGen.lines.get(i));
+        
+        
+        for(int i =0;i<RoomGen.list_finished.size();i++){
+        
+        		g2.setColor(Color.BLACK);
+        		g2.draw(RoomGen.list_finished.get(i).getRec());
         	
+        	g2.drawString(RoomGen.list_finished.get(i).getTypeName(), 
+        			(RoomGen.list_finished.get(i).getX())+(RoomGen.list_finished.get(i).getLX()/2), 
+        			(RoomGen.list_finished.get(i).getY())+(RoomGen.list_finished.get(i).getLY()/2));
+        }
+        for(int i =0;i<RoomGen.corridor.size();i++){
+            g2.setColor(Color.CYAN);
+        	g2.fill(RoomGen.corridor.get(i));
+        	g2.setColor(Color.black);
+        	g2.draw(RoomGen.corridor.get(i));
         }
       
     }
-
 }

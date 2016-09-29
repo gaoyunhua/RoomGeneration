@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints.Key;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -14,12 +15,12 @@ import javax.swing.JPanel;
 
 public class RoomGen {
 	
-	public static ArrayList<Line2D> lines = new ArrayList<Line2D>();
-
+	public static ArrayList<Rectangle> rec = new ArrayList<Rectangle>();
+	public static ArrayList<Rectangle> corridor = new ArrayList<Rectangle>();
 	static ArrayList<Block> list_unfinished = new ArrayList<Block>();
-	static ArrayList<Block> list_finished = new ArrayList<Block>();
+	static ArrayList<Room> list_finished = new ArrayList<Room>();
 	
-	static ArrayList<Room> rooms = new ArrayList<Room>();
+	final static int room_size = 5;
 
 	public static void main(String[] args) {
 
@@ -64,7 +65,7 @@ public class RoomGen {
 		
 		
 		if (b.getLX() < 160 && b.getLY() < 160) {
-			list_finished.add(b);
+			list_finished.add(new Room(b));
 			return b;
 		} else {
 			
@@ -79,7 +80,7 @@ public class RoomGen {
 			// horizontal line
 			case 1:
 
-				int y = (int) (Math.random() * (b.getLY()-20))+10;
+				int y = (int) (Math.random() * (b.getLY()-40))+20;
 		
 				Block blockU = new Block(b.getX(), b.getY(), b.getLX(),
 						y);
@@ -96,7 +97,7 @@ public class RoomGen {
 				// vertical line
 			case 2:
 
-				int x = (int) (Math.random() * (b.getLX()-20))+10;
+				int x = (int) (Math.random() * (b.getLX()-40))+20;
 				
 				Block blockL = new Block(b.getX(), b.getY(), x,
 						b.getLY());
@@ -114,33 +115,31 @@ public class RoomGen {
 
 	}
 
-	
 	public static void createCorridors(){
 		
-		int size = 5;
 		for(int i =0;i<list_finished.size();i++){
-			switch((int)(Math.random()*(4-0))+0){
+			switch((int)(Math.random()*(4))){
 			
 			
 			//left
 			case 0:
-				Line2D lineL = new Line2D.Float(list_finished.get(i).getX()+size, list_finished.get(i).getY(),list_finished.get(i).getX()+size,list_finished.get(i).getY()+list_finished.get(i).getLY());
-				lines.add(lineL);
+				Rectangle recL = new Rectangle(list_finished.get(i).getX(),list_finished.get(i).getY(),room_size,list_finished.get(i).getLY());
+				corridor.add(recL);
 				break;
 			//right
 			case 1:
-				Line2D lineR = new Line2D.Float(list_finished.get(i).getX()+(list_finished.get(i).getLX()-size), list_finished.get(i).getY(),list_finished.get(i).getX()+(list_finished.get(i).getLX()-size),list_finished.get(i).getY()+list_finished.get(i).getLY());
-				lines.add(lineR);
+				Rectangle recR = new Rectangle(list_finished.get(i).getX()+(list_finished.get(i).getLX()-room_size),list_finished.get(i).getY(),room_size,list_finished.get(i).getLY());
+				corridor.add(recR);
 				break;
 			//up
 			case 2:
-				Line2D lineU = new Line2D.Float(list_finished.get(i).getX(), list_finished.get(i).getY()+size,list_finished.get(i).getX()+list_finished.get(i).getLX(),list_finished.get(i).getY()+size);
-				lines.add(lineU);
+				Rectangle recU = new Rectangle(list_finished.get(i).getX(),list_finished.get(i).getY(),list_finished.get(i).getLX(),room_size);
+				corridor.add(recU);
 				break;
 			//down
 			case 3:
-				Line2D lineD = new Line2D.Float(list_finished.get(i).getX(), list_finished.get(i).getY()+(list_finished.get(i).getLY()-size),list_finished.get(i).getX()+list_finished.get(i).getLX(),list_finished.get(i).getY()+(list_finished.get(i).getLY()-size));
-				lines.add(lineD);
+				Rectangle recD = new Rectangle(list_finished.get(i).getX(),list_finished.get(i).getY()+(list_finished.get(i).getLY()-room_size),list_finished.get(i).getLX(),room_size);
+				corridor.add(recD);
 				break;
 			default:
 				System.out.println("mistakes were made in corridor creation");
@@ -150,5 +149,4 @@ public class RoomGen {
 		}
 	}  
 	}
-
 
