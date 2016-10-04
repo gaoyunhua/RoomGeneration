@@ -1,65 +1,37 @@
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.RenderingHints.Key;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.geom.Line2D;
-import java.util.ArrayList;
 
-import javax.swing.JComboBox.KeySelectionManager;
-import javax.swing.JComponent;
+import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.HashMap;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 public class RoomGen {
 	
 	public static ArrayList<Rectangle> rec = new ArrayList<Rectangle>();
-	public static ArrayList<Rectangle> corridor = new ArrayList<Rectangle>();
+	public static ArrayList<Corridor> corridor = new ArrayList<Corridor>();
 	static ArrayList<Block> list_unfinished = new ArrayList<Block>();
 	static ArrayList<Room> list_finished = new ArrayList<Room>();
+	static ArrayList<Room> rooms = new ArrayList<Room>();
+	static ArrayList<Block> all_elements = new ArrayList<Block>();
+	static HashMap<Block, ArrayList<Block>> blocks_around = new HashMap<Block, ArrayList<Block>>();
 	
-	final static int room_size = 5;
+	final static int CORRIDOR_SIZE = 8;
+	final static int DOOR_SIZE = 4;
 
 	public static void main(String[] args) {
 
-		JFrame frame = new JFrame("FrameDemo");
-		frame.addKeyListener(new KeyListener() {
-			
-			public void keyTyped(KeyEvent e) {
-				if(' '==e.getKeyChar())
-				{
-					//main(null);
-				}
-			
-				
-			}
-			
-			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			public void keyPressed(KeyEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
+		JFrame frame = new JFrame("Room Generation");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(500, 500);
+		frame.setSize(900, 700);
 		
 		frame.add(new WholeImage());
 		frame.validate();
 
 		frame.getContentPane();
 		frame.repaint();
-
-		frame.pack();
 		frame.setVisible(true);
 
 	}
-
+	
 	public static Block split(Block b) {
 		int r = (int) Math.ceil(Math.random()*2);
 		
@@ -123,23 +95,31 @@ public class RoomGen {
 			
 			//left
 			case 0:
-				Rectangle recL = new Rectangle(list_finished.get(i).getX(),list_finished.get(i).getY(),room_size,list_finished.get(i).getLY());
+				Corridor recL = new Corridor(list_finished.get(i).getX(),list_finished.get(i).getY(),CORRIDOR_SIZE,list_finished.get(i).getLY());
+				Room roomL = new Room(list_finished.get(i).getX()+CORRIDOR_SIZE, list_finished.get(i).getY(),list_finished.get(i).getLX()-CORRIDOR_SIZE,list_finished.get(i).getLY());
 				corridor.add(recL);
+				rooms.add(roomL);
 				break;
 			//right
 			case 1:
-				Rectangle recR = new Rectangle(list_finished.get(i).getX()+(list_finished.get(i).getLX()-room_size),list_finished.get(i).getY(),room_size,list_finished.get(i).getLY());
+				Corridor recR = new Corridor(list_finished.get(i).getX()+(list_finished.get(i).getLX()-CORRIDOR_SIZE),list_finished.get(i).getY(),CORRIDOR_SIZE,list_finished.get(i).getLY());
+				Room roomR = new Room(list_finished.get(i).getX(), list_finished.get(i).getY(),list_finished.get(i).getLX()-CORRIDOR_SIZE,list_finished.get(i).getLY());
 				corridor.add(recR);
+				rooms.add(roomR);
 				break;
 			//up
 			case 2:
-				Rectangle recU = new Rectangle(list_finished.get(i).getX(),list_finished.get(i).getY(),list_finished.get(i).getLX(),room_size);
+				Corridor recU = new Corridor(list_finished.get(i).getX(),list_finished.get(i).getY(),list_finished.get(i).getLX(),CORRIDOR_SIZE);
+				Room roomU = new Room(list_finished.get(i).getX(), list_finished.get(i).getY()+CORRIDOR_SIZE,list_finished.get(i).getLX(),list_finished.get(i).getLY()-CORRIDOR_SIZE);
 				corridor.add(recU);
+				rooms.add(roomU);
 				break;
 			//down
 			case 3:
-				Rectangle recD = new Rectangle(list_finished.get(i).getX(),list_finished.get(i).getY()+(list_finished.get(i).getLY()-room_size),list_finished.get(i).getLX(),room_size);
+				Corridor recD = new Corridor(list_finished.get(i).getX(),list_finished.get(i).getY()+(list_finished.get(i).getLY()-CORRIDOR_SIZE),list_finished.get(i).getLX(),CORRIDOR_SIZE);
+				Room roomD = new Room(list_finished.get(i).getX(), list_finished.get(i).getY(),list_finished.get(i).getLX(),list_finished.get(i).getLY()-CORRIDOR_SIZE);
 				corridor.add(recD);
+				rooms.add(roomD);
 				break;
 			default:
 				System.out.println("mistakes were made in corridor creation");
