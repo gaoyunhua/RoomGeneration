@@ -1,8 +1,13 @@
 
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 public class RoomGen {
 	
@@ -22,13 +27,46 @@ public class RoomGen {
 	static ArrayList<Block> all_elements = new ArrayList<Block>();
 	static HashMap<Block, ArrayList<Block>> blocks_around = new HashMap<Block, ArrayList<Block>>();
 	
+	public static JFrame frame = new JFrame("Room Generation");
+//	public static JPanel panel = new JPanel();
+	public static JButton restart = new JButton("Restart");
+	public static WholeImage image = new WholeImage();
+	
 	public static void main(String[] args) {
 
-		JFrame frame = new JFrame("Room Generation");
+		//JFrame frame = new JFrame("Room Generation");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(900, 700);
 		
-		frame.add(new WholeImage());
+//		panel.setSize(700, 600);
+		
+		restart.setSize(90, 30);
+		restart.setLocation(20, 630);
+		
+
+
+		frame.add(restart);
+		frame.add(image);
+//		frame.add(panel);
+		
+//		panel.add(new WholeImage());
+		
+		restart.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent arg0) {
+				
+				image.removeAll();
+				clearAll();
+				WholeImage.clearAll();
+				image = new WholeImage();
+				image.revalidate();
+				frame.repaint();
+			}});
+		
+//		panel.repaint();
+//		panel.revalidate();
+//		panel.setVisible(true);
+		
 		frame.validate();
 
 		frame.getContentPane();
@@ -134,5 +172,15 @@ public class RoomGen {
 			}
 		}
 	}  
+	public static void clearAll(){
+		rec.clear();
+		corridor.clear();
+		list_unfinished.clear();
+		list_finished.clear();
+		rooms.clear();
+		all_elements.clear();
+		blocks_around.clear();
+		
+	}
 	}
 

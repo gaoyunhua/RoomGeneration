@@ -11,12 +11,12 @@ import javax.swing.JPanel;
 public class WholeImage extends JPanel {
 	
 	private Block main;
-	private ArrayList<Block> path = new ArrayList<Block>();
-	private ArrayList<Line2D> doors = new ArrayList<Line2D>();
-	private ArrayList<Block> finished_doors = new ArrayList<Block>();
-	private ArrayList<Block> unfinished_doors = new ArrayList<Block>();
-	int new_start;
-	int count =0;
+	private static ArrayList<Block> path = new ArrayList<Block>();
+	private static ArrayList<Line2D> doors = new ArrayList<Line2D>();
+	private static ArrayList<Block> finished_doors = new ArrayList<Block>();
+	private static ArrayList<Block> unfinished_doors = new ArrayList<Block>();
+	static int new_start;
+	static int count =0;
 	
 	public WholeImage(){
 		Block base = new Block(20, 20, 800, 600);
@@ -323,6 +323,16 @@ public Block findNewPath(int last_block_index){
         		(RoomGen.all_elements.get(i).getX())+(RoomGen.all_elements.get(i).getLX()/2), 
        			(RoomGen.all_elements.get(i).getY())+(RoomGen.all_elements.get(i).getLY()/2));
         }
+    }
+    
+    public static void clearAll(){
+  
+    	path.clear();
+    	doors.clear();
+    	finished_doors.clear();
+    	unfinished_doors.clear();
+    	new_start=0;
+    	count =0;
     }
         
 }
