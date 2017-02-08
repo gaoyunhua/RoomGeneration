@@ -17,7 +17,7 @@ public class Block extends JPanel {
 	private ArrayList<Line2D> doors;
 	
 	private final int DOOR_NUMBER_MIN = 1;
-	private final int DOOR_NUMBER_MAX = 3;
+	private final int DOOR_NUMBER_MAX = 5;
 	
 
 	public Block(int x, int y, int lengthX, int lengthY) {
@@ -32,14 +32,22 @@ public class Block extends JPanel {
 
 	}
 
+	int RightSide = this.getX() + this.getLX();
+	int BottomSide = this.getY() + this.getLY();
+	
 	public boolean isOnRight(Block b) {
-		return b.getX() == this.getX() + this.getLX()
-				&& ((this.getY() <= b.getY() && b.getY() <= this.getY()
-						+ this.getLY())
+		int BlockBottomSide = b.getY() + b.getLY();
+		
+		boolean isThisYSmaller =  this.getY() <= b.getY();
+		boolean isBlockYSmaller = b.getY() <= BottomSide;
+	
+		
+		
+		return b.getX() == RightSide
+				&& ((isThisYSmaller && isBlockYSmaller)
 						|| (b.getY() + b.getLY() >= this.getY() && (b.getY() + b
-								.getLY()) <= this.getY() + this.getLY()) || (b
-						.getY() <= this.getY() && (b.getY() + b.getLY()) >= this
-						.getY() + this.getLY()));
+								.getLY()) <= BottomSide) || (b
+						.getY() <= this.getY() && (b.getY() + b.getLY()) >= BottomSide));
 	}
 	public boolean isOnLeft(Block b){
 		return ((b.getX()+b.getLX()) == this.getX()) && ((this.getY() <= b.getY() && b.getY() <= this.getY()
@@ -107,6 +115,7 @@ public class Block extends JPanel {
 	public void addDoor(){
 		current_door_num++;
 	}
+	
 	public void setDoor(int x,int y, boolean horizontal){
 		if(horizontal){
 			doors.add(new Line2D.Float(x, y,x+RoomGen.DOOR_SIZE,y));
@@ -114,6 +123,10 @@ public class Block extends JPanel {
 			doors.add(new Line2D.Float(x, y,x,y+RoomGen.DOOR_SIZE));
 		}
 	}
+	public ArrayList<Line2D> getDoors(){
+		return doors;
+	}
+	
 	
 	// decide whether the block are touching
 	public boolean touching(Block b) {

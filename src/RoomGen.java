@@ -6,6 +6,14 @@ import javax.swing.JFrame;
 
 public class RoomGen {
 	
+	final static int CORRIDOR_SIZE = 8;
+	final static int DOOR_SIZE = 4;
+	final static int MIN_ROOM_HEIGHT = 20;
+	final static int MIN_ROOM_WIDTH = 20;	
+	
+	final static int MAX_ROOM_HEIGHT = 160;
+	final static int MAX_ROOM_WIDTH = 160;
+	
 	public static ArrayList<Rectangle> rec = new ArrayList<Rectangle>();
 	public static ArrayList<Corridor> corridor = new ArrayList<Corridor>();
 	static ArrayList<Block> list_unfinished = new ArrayList<Block>();
@@ -14,9 +22,6 @@ public class RoomGen {
 	static ArrayList<Block> all_elements = new ArrayList<Block>();
 	static HashMap<Block, ArrayList<Block>> blocks_around = new HashMap<Block, ArrayList<Block>>();
 	
-	final static int CORRIDOR_SIZE = 8;
-	final static int DOOR_SIZE = 4;
-
 	public static void main(String[] args) {
 
 		JFrame frame = new JFrame("Room Generation");
@@ -36,20 +41,21 @@ public class RoomGen {
 		int r = (int) Math.ceil(Math.random()*2);
 		
 		
-		if (b.getLX() < 160 && b.getLY() < 160) {
+	//	if (b.getLX() < 160 && b.getLY() < 160) {
+		if ((b.getLX() <= MAX_ROOM_WIDTH && b.getLY() <= MAX_ROOM_HEIGHT) && (b.getLX() >= MIN_ROOM_WIDTH && b.getLY()>=MIN_ROOM_HEIGHT)) {
 			list_finished.add(new Room(b));
 			return b;
 		} else {
 			
-			if(b.getLX() < 160 && b.getLY() > 160){
+			if(b.getLX() <= MAX_ROOM_WIDTH && b.getLX()>= MIN_ROOM_WIDTH && b.getLY() > MAX_ROOM_HEIGHT){
 				r = 1;
-			}else if(b.getLX() > 160 && b.getLY() < 160){
+			}else if(b.getLX() > MAX_ROOM_WIDTH && b.getLY() <= MAX_ROOM_HEIGHT && b.getLY()>=MIN_ROOM_HEIGHT){
 				r = 2;
-			}
+			}//else if(b.getLX()< MIN_ROOM_WIDTH)
 			
 			switch (r) {
 
-			// horizontal line
+			// horizontal division
 			case 1:
 
 				int y = (int) (Math.random() * (b.getLY()-40))+20;
@@ -66,7 +72,7 @@ public class RoomGen {
 
 				return split(blockU);
 
-				// vertical line
+				// vertical division
 			case 2:
 
 				int x = (int) (Math.random() * (b.getLX()-40))+20;

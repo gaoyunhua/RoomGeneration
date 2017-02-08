@@ -1,6 +1,8 @@
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.geom.Line2D;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
@@ -9,8 +11,12 @@ import javax.swing.JPanel;
 public class WholeImage extends JPanel {
 	
 	private Block main;
-	private int count = 0;
 	private ArrayList<Block> path = new ArrayList<Block>();
+	private ArrayList<Line2D> doors = new ArrayList<Line2D>();
+	private ArrayList<Block> finished_doors = new ArrayList<Block>();
+	private ArrayList<Block> unfinished_doors = new ArrayList<Block>();
+	int new_start;
+	int count =0;
 	
 	public WholeImage(){
 		Block base = new Block(20, 20, 800, 600);
@@ -44,34 +50,224 @@ public class WholeImage extends JPanel {
 		 for(int i = 0;i<RoomGen.all_elements.size();i++){
 			 RoomGen.all_elements.get(i).setDoorNum();
 		 }
+		 unfinished_doors.addAll(RoomGen.all_elements);
 		 
 	        Block b = createPath(RoomGen.all_elements.get((int)(Math.random()*RoomGen.all_elements.size())));
+	        new_start = path.size()-2;
+	        Block a = createPath(findNewPath(new_start));
+	        
+	        
+//	        while(unfinished_doors.size()>0){
+//	        	Block a = createPath(findNewPath(path.size()-2));
+//	        	count++;
+//	        	if(count ==20){
+//	        	//	break;
+//	        	}
+//	        }
+	        
+	        System.out.println("last room potential: "+b.getPotentialDoorNum());
+	        System.out.println("finished doors: "+finished_doors.size());
+	        System.out.println("unfinished doors: "+unfinished_doors.size());
+	        System.out.println("all elements: "+RoomGen.all_elements.size());
 	}
+	
+	
+	
+	
+	
+	/*creating doors
+	 * 1. create path from random point until reach block n with door full potential
+	 * 2. go back on block n-1
+	 * 3. if(block n-1 reached full potential) repeat 2.
+	 *    else createPath(n-1)
+	 * 4.if all block has full potential stop
+	 * 
+	 * 
+	 * 1.
+	 * createPath(random block b){
+	 * 	
+	 *    Block next = new Block
+	 * }
+	 * 
+	 */
+	
+	
+	
+	
+	
+	
+	
+	//creating path with doors
 	public Block createPath(Block b){
 		main = b;
 		int index = (int) (Math.random()*RoomGen.blocks_around.get(b).size());
 		Block next;
-		path.add(b);
 		
+		if(!path.contains(b)){
+			path.add(b);
+		}
 		
-		//make sure that elements of path are distinct 
+		//set the next index to make sure that elements of path are distinct 
 		if(path.contains(RoomGen.blocks_around.get(b).get(index))){
 			if(index != 0){
-				next = RoomGen.blocks_around.get(b).get(index-1);
+				index = index-1;
 			}else{
-				next = RoomGen.blocks_around.get(b).get(index+1);
+				index = index+1;
 			}
-		}else{
-			next = RoomGen.blocks_around.get(b).get(index);
+		}else{		
 		}
-		count++;
-		if(count == 15){
-			path.add(next);
-			return next;
+		next = new Block(0,0,0,0);
+		
+		//Initialise  next block
+		if(unfinished_doors.contains(RoomGen.blocks_around.get(b).get(index))){
+			next = RoomGen.blocks_around.get(b).get(index);
 		}else{
+			for(int i =0;i<RoomGen.blocks_around.get(b).size();i++){
+				if(unfinished_doors.contains(RoomGen.blocks_around.get(b).get(i))){
+					next = RoomGen.blocks_around.get(b).get(i);
+					break;
+				}else if(i==RoomGen.blocks_around.get(b).size()-1){
+					return b;
+				}
+			}
+		}
+
+		
+		//check which side b and next share and add door on it, also add one door to both b and next
+		//-------------------------------------------------------------------------------------------------
+		
+		
+		
+		
+		if(b.isOnRight(next)){	
+			//(int)(Math.random() * (max - min) + min)
+			int min = Math.max(b.getY(), next.getY());
+			int max = Math.min(b.getY()+b.getLY(), next.getY()+next.getLY())-RoomGen.DOOR_SIZE;
+			
+			System.out.println("i am on right, index: "+index);
+			
+			b.setDoor(next.getX(), (int)(Math.random()*(max-min)+min), false);
+			
+			for(int i = 0;i<b.getDoors().size();i++){
+				if(!doors.contains(b.getDoors().get(i))){
+					doors.add(b.getDoors().get(i));
+				}
+			}
+			
+			
+		}else if(b.isOnLeft(next)){
+			System.out.println("i am on left, index: "+index);
+			
+			int min = Math.max(b.getY(), next.getY());
+			int max = Math.min(b.getY()+b.getLY(), next.getY()+next.getLY());
+			
+			b.setDoor(b.getX(), (int)(Math.random()*(max-min)+min), false);
+			
+			for(int i = 0;i<b.getDoors().size();i++){
+				if(!doors.contains(b.getDoors().get(i))){
+					doors.add(b.getDoors().get(i));
+				}
+			}
+			
+		}else if(b.isUp(next)){
+			System.out.println("i am above, index: "+index);
+			
+			int min = Math.max(b.getX(), next.getX());
+			int max = Math.min(b.getX()+b.getLX(), next.getX()+next.getLX());
+			
+			b.setDoor((int)(Math.random()*(max-min)+min), b.getY(), true);
+			
+			for(int i = 0;i<b.getDoors().size();i++){
+				if(!doors.contains(b.getDoors().get(i))){
+					doors.add(b.getDoors().get(i));
+				}
+			}
+			
+		}else if(b.isDown(next)){
+			System.out.println("i am down, index: "+index);
+			
+			int min = Math.max(b.getX(), next.getX());
+			int max = Math.min(b.getX()+b.getLX(), next.getX()+next.getLX());
+			
+			b.setDoor((int)(Math.random()*(max-min)+min), next.getY(), true);
+			
+			for(int i = 0;i<b.getDoors().size();i++){
+				if(!doors.contains(b.getDoors().get(i))){
+					doors.add(b.getDoors().get(i));
+				}
+			}
+		}
+		//-----------------------------------------------------------------------------
+		
+		
+		
+		
+		b.addDoor();
+		next.addDoor();
+		
+		//when current block reaches full door potential when adding door to next,
+		//add it to the list of finished blocks and remove it from the list of unfinished ones
+		if(b.getPotentialDoorNum() == b.getCurrentDoorNum()){
+			finished_doors.add(b);
+			for(int i = 0;i<unfinished_doors.size();i++){
+				if(unfinished_doors.get(i).equals(b)){
+					unfinished_doors.remove(i);
+				}
+			}
+		}
+		
+		//path ends if next reaches full door potential when adding door from b to next
+		//next is put to finished list and removed from unfinished list
+		if(next.getPotentialDoorNum() == next.getCurrentDoorNum()){
+			finished_doors.add(next);
+			path.add(next);
+			
+			for(int i = 0;i<unfinished_doors.size();i++){
+				if(unfinished_doors.get(i).equals(next)){
+					unfinished_doors.remove(i);
+				}
+			}
+			return next;
+		}
+		//otherwise the path continues
+		else{
 			return createPath(next);
 		}
 		}
+	
+	
+	
+//find start block for a new path	
+public Block findNewPath(int last_block_index){
+	
+	for(int i = path.size()-1;i>=0;i = i-1){
+		
+	}
+	
+	if(path.get(last_block_index).getPotentialDoorNum() == path.get(last_block_index).getCurrentDoorNum()){
+		if(last_block_index<0){
+			System.out.println("this should not happen");
+			return path.get((int)(Math.random()*path.size()));
+		}else{
+			System.out.println("going back one more time");
+			return findNewPath(last_block_index -1);
+		}
+	}else{
+		System.out.println("we found new start, index: "+last_block_index);
+		return path.get(last_block_index);
+	}
+}	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
     public void paintComponent(Graphics g) {
@@ -83,10 +279,10 @@ public class WholeImage extends JPanel {
         		g2.setColor(Color.BLACK);
         		g2.draw(RoomGen.rooms.get(i).getRec());
         	
-        	g2.drawString(RoomGen.rooms.get(i).getTypeName()+" "+RoomGen.rooms.get(i).getPotentialDoorNum(), 
-        
-        			(RoomGen.rooms.get(i).getX())+(RoomGen.rooms.get(i).getLX()/2), 
-        			(RoomGen.rooms.get(i).getY())+(RoomGen.rooms.get(i).getLY()/2));
+//        	g2.drawString(RoomGen.rooms.get(i).getTypeName()+" "+RoomGen.rooms.get(i).getPotentialDoorNum(), 
+//        
+//        			(RoomGen.rooms.get(i).getX())+(RoomGen.rooms.get(i).getLX()/2), 
+//        			(RoomGen.rooms.get(i).getY())+(RoomGen.rooms.get(i).getLY()/2));
         }
         //corridors
         for(int i =0;i<RoomGen.corridor.size();i++){
@@ -95,20 +291,6 @@ public class WholeImage extends JPanel {
         	g2.setColor(Color.black);
         	g2.draw(RoomGen.corridor.get(i).getRec());
         }
-        //main and adjacent
-//        g2.setColor(Color.pink);
-//        g2.fill(RoomGen.rooms.get(2).getRec());
-//        g2.setColor(Color.black);
-//        g2.draw(RoomGen.rooms.get(2).getRec());
-//        
-//       for(int i =0;i<RoomGen.blocks_around.get(RoomGen.rooms.get(2)).size();i++){
-//        	g2.setColor(Color.yellow);
-//        	g2.fill(RoomGen.blocks_around.get(RoomGen.rooms.get(2)).get(i).getRec());
-//     
-//        	g2.setColor(Color.black);
-//        	g2.draw(RoomGen.blocks_around.get(RoomGen.rooms.get(2)).get(i).getRec());
-//       
-//        }
         
         g2.setColor(Color.GREEN);
 		for(int i = 0;i<path.size();i++){
@@ -116,25 +298,31 @@ public class WholeImage extends JPanel {
 			g2.fill(path.get(i).getRec());
 			g2.setColor(Color.black);
 			g2.draw(path.get(i).getRec());
-			g2.drawString(i+"", path.get(i).getX()+(path.get(i).getLX()/2), path.get(i).getY()+(path.get(i).getLY()/2));
+			g2.drawString(i+"", path.get(i).getX()+(path.get(i).getLX()/2)+5, path.get(i).getY()+(path.get(i).getLY()/2)+10);
 			
 		}
-        g2.setColor(Color.RED);
-        g2.fill(main.getRec());
+		
+        g2.setColor(Color.pink);
+        g2.fill(path.get(new_start).getRec());
+        
+		
+          g2.setColor(Color.DARK_GRAY);
+          g2.fill(path.get(path.size()-1).getRec());
+          
+          g2.setColor(Color.RED);
         System.out.println("path size "+path.size());
+        
+        //painting doors
+        g2.setStroke(new BasicStroke(2));
+        
+        for(int i = 0;i<doors.size();i++){
+        	g2.draw(doors.get(i));
+        }
+        for(int i = 0;i<RoomGen.all_elements.size();i++){
+        	g2.drawString(RoomGen.all_elements.get(i).getCurrentDoorNum()+"/"+RoomGen.all_elements.get(i).getPotentialDoorNum(), 
+        		(RoomGen.all_elements.get(i).getX())+(RoomGen.all_elements.get(i).getLX()/2), 
+       			(RoomGen.all_elements.get(i).getY())+(RoomGen.all_elements.get(i).getLY()/2));
+        }
     }
         
 }
-
-
-
-//createPath - from random initial into the one with full potential when we get to it, when full potential detected - add block to array of finished, subtract from unfinished
-//if(unfinished not null){go backwards - find closest which has free potential and start a new path from it)
-
-
-
-
-
-
-
-
