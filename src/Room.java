@@ -1,6 +1,3 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-
 public class Room extends Block{
 
 	private int room_type = -1;
@@ -10,7 +7,7 @@ public class Room extends Block{
 		super(x, y, lengthX, lengthY);
 	}
 	public Room(Block b){
-		super(b.getX(),b.getY(),b.getLX(),b.getLY());
+		super(b.getX(),b.getY(),b.getWidth(),b.getHeight());
 	}
 	public void chooseType(){
 		room_type = (int) (Math.random()*(4));

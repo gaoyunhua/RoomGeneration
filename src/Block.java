@@ -4,74 +4,74 @@ import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
-public class Block extends JPanel {
+class Block extends JPanel {
 	private int x;
 	private int y;
-	private int lengthX;
-	private int lengthY;
+	private int width;
+	private int height;
 	private int index;
-	private ArrayList<Block> blocks_around;
-	private Rectangle div;
-	private int current_door_num = 0;
-	private int potential_door_num = 0;
+	private ArrayList<Block> blocksAround;
+	private Rectangle rectangle;
+	private int currentDoorNumber = 0;
+	private int potentialDoorNumber = 0;
 	private ArrayList<Line2D> doors;
 	
 	private final int DOOR_NUMBER_MIN = 1;
 	private final int DOOR_NUMBER_MAX = 5;
 	
 
-	public Block(int x, int y, int lengthX, int lengthY) {
+	Block(int x, int y, int width, int height) {
 		this.x = x;
 		this.y = y;
-		this.lengthX = lengthX;
-		this.lengthY = lengthY;
+		this.width = width;
+		this.height = height;
 
-		doors = new ArrayList<Line2D>(); 
-		div = new Rectangle(x, y, lengthX, lengthY);
-		RoomGen.rec.add(div);
+		doors = new ArrayList<>();
+		rectangle = new Rectangle(x, y, width, height);
+		RoomGen.rec.add(rectangle);
 
 	}
 
-	int RightSide = this.getX() + this.getLX();
-	int BottomSide = this.getY() + this.getLY();
+	int RightSide = this.getX() + this.getWidth();
+	int BottomSide = this.getY() + this.getHeight();
 	
-	public boolean isOnRight(Block b) {
-		int BlockBottomSide = b.getY() + b.getLY();
+	boolean isOnRight(Block block) {
+		int BlockBottomSide = block.getY() + block.getHeight();
 		
-		boolean isThisYSmaller =  this.getY() <= b.getY();
-		boolean isBlockYSmaller = b.getY() <= BottomSide;
+		boolean isThisYSmaller =  this.getY() <= block.getY();
+		boolean isBlockYSmaller = block.getY() <= BottomSide;
 	
 		
 		
-		return b.getX() == RightSide
+		return block.getX() == RightSide
 				&& ((isThisYSmaller && isBlockYSmaller)
-						|| (b.getY() + b.getLY() >= this.getY() && (b.getY() + b
-								.getLY()) <= BottomSide) || (b
-						.getY() <= this.getY() && (b.getY() + b.getLY()) >= BottomSide));
+						|| (block.getY() + block.getHeight() >= this.getY() && (block.getY() + block
+								.getHeight()) <= BottomSide) || (block
+						.getY() <= this.getY() && (block.getY() + block.getHeight()) >= BottomSide));
 	}
-	public boolean isOnLeft(Block b){
-		return ((b.getX()+b.getLX()) == this.getX()) && ((this.getY() <= b.getY() && b.getY() <= this.getY()
-				+ this.getLY()) || (b.getY() + b.getLY() >= this.getY() && (b.getY() + b
-						.getLY()) <= this.getY() + this.getLY()) || (b
-				.getY() <= this.getY() && (b.getY() + b.getLY()) >= this
-				.getY() + this.getLY()) );
+	boolean isOnLeft(Block b){
+		return ((b.getX()+b.getWidth()) == this.getX()) && ((this.getY() <= b.getY() && b.getY() <= this.getY()
+				+ this.getHeight()) || (b.getY() + b.getHeight() >= this.getY() && (b.getY() + b
+						.getHeight()) <= this.getY() + this.getHeight()) || (b
+				.getY() <= this.getY() && (b.getY() + b.getHeight()) >= this
+				.getY() + this.getHeight()) );
 				
 	}
-	public boolean isUp(Block b){
-		return ((b.getY()+b.getLY()) == this.getY() && ((this.getX() <= b.getX() && b.getX() <= this.getX()
-				+ this.getLX()) || (b.getX() + b.getLX() >= this.getX() && (b.getX() + b
-						.getLX()) <= this.getX() + this.getLX()) || (b
-				.getX() <= this.getX() && (b.getX() + b.getLX()) >= this
-				.getX() + this.getLX()) ));
+	boolean isUp(Block b){
+		return ((b.getY()+b.getHeight()) == this.getY() && ((this.getX() <= b.getX() && b.getX() <= this.getX()
+				+ this.getWidth()) || (b.getX() + b.getWidth() >= this.getX() && (b.getX() + b
+						.getWidth()) <= this.getX() + this.getWidth()) || (b
+				.getX() <= this.getX() && (b.getX() + b.getWidth()) >= this
+				.getX() + this.getWidth()) ));
 	}	
-	public boolean isDown(Block b){
-		return b.getY() == this.getY() + this.getLY()
+	boolean isDown(Block b){
+		return b.getY() == this.getY() + this.getHeight()
 				&& ((this.getX() <= b.getX() && b.getX() <= this.getX()
-				+ this.getLX())
-				|| (b.getX() + b.getLX() >= this.getX() && (b.getX() + b
-						.getLX()) <= this.getX() + this.getLX()) || (b
-				.getX() <= this.getX() && (b.getX() + b.getLX()) >= this
-				.getX() + this.getLX()));
+				+ this.getWidth())
+				|| (b.getX() + b.getWidth() >= this.getX() && (b.getX() + b
+						.getWidth()) <= this.getX() + this.getWidth()) || (b
+				.getX() <= this.getX() && (b.getX() + b.getWidth()) >= this
+				.getX() + this.getWidth()));
 	}
 
 	public int getX() {
@@ -82,16 +82,16 @@ public class Block extends JPanel {
 		return y;
 	}
 
-	public int getLX() {
-		return lengthX;
+	public int getWidth() {
+		return width;
 	}
 
-	public int getLY() {
-		return lengthY;
+	public int getHeight() {
+		return height;
 	}
 
 	public Rectangle getRec() {
-		return div;
+		return rectangle;
 	}
 
 	public void setIndex(int i) {
@@ -102,18 +102,21 @@ public class Block extends JPanel {
 		return index;
 	}
 
-	public void setDoorNum(){
-		potential_door_num = (int) (Math.random()*DOOR_NUMBER_MAX) + DOOR_NUMBER_MIN;
-		System.out.println(potential_door_num);
+	public void setDoorNum() {
+		potentialDoorNumber = (int) (Math.random()*DOOR_NUMBER_MAX) + DOOR_NUMBER_MIN;
+		System.out.println(potentialDoorNumber);
 	}
+
 	public int getPotentialDoorNum(){
-		return potential_door_num;
+		return potentialDoorNumber;
 	}
+
 	public int getCurrentDoorNum(){
-		return current_door_num;
+		return currentDoorNumber;
 	}
+
 	public void addDoor(){
-		current_door_num++;
+		currentDoorNumber++;
 	}
 	
 	public void setDoor(int x,int y, boolean horizontal){
@@ -127,30 +130,24 @@ public class Block extends JPanel {
 		return doors;
 	}
 	
-	
-	// decide whether the block are touching
-	public boolean touching(Block b) {
-		if (isOnRight(b) || isOnLeft(b) || isUp(b) || isDown(b)) {
-			return true;
-		} else {
-			return false;
-		}
+
+	public boolean isTouching(Block b) {
+		return (isOnRight(b) || isOnLeft(b) || isUp(b) || isDown(b));
 	}
 
 	// create arraylist for blocks around
 	public void generateBlocksAround() {
-		int index = 0;
 
-		blocks_around = new ArrayList<Block>();
+		blocksAround = new ArrayList<>();
 		for (int i = 0; i < RoomGen.all_elements.size(); i++) {
 			if (RoomGen.all_elements.get(i).getIndex() == this.getIndex()) {
 				index = i;
-			} else if (this.touching(RoomGen.all_elements.get(i))) {
-				blocks_around.add(RoomGen.all_elements.get(i));
+			} else if (this.isTouching(RoomGen.all_elements.get(i))) {
+				blocksAround.add(RoomGen.all_elements.get(i));
 			} else {
 			}
 		}
-		RoomGen.blocks_around.put(this, blocks_around);
+		RoomGen.blocks_around.put(this, blocksAround);
 
 	}
 }

@@ -11,10 +11,10 @@ import javax.swing.JPanel;
 public class WholeImage extends JPanel {
 	
 	private Block main;
-	private static ArrayList<Block> path = new ArrayList<Block>();
-	private static ArrayList<Line2D> doors = new ArrayList<Line2D>();
-	private static ArrayList<Block> finished_doors = new ArrayList<Block>();
-	private static ArrayList<Block> unfinished_doors = new ArrayList<Block>();
+	private static ArrayList<Block> path = new ArrayList<>();
+	private static ArrayList<Line2D> doors = new ArrayList<>();
+	private static ArrayList<Block> finished_doors = new ArrayList<>();
+	private static ArrayList<Block> unfinished_doors = new ArrayList<>();
 	static int new_start;
 	static int count =0;
 	
@@ -142,7 +142,7 @@ public class WholeImage extends JPanel {
 		if(b.isOnRight(next)){	
 			//(int)(Math.random() * (max - min) + min)
 			int min = Math.max(b.getY(), next.getY());
-			int max = Math.min(b.getY()+b.getLY(), next.getY()+next.getLY())-RoomGen.DOOR_SIZE;
+			int max = Math.min(b.getY()+b.getHeight(), next.getY()+next.getHeight())-RoomGen.DOOR_SIZE;
 			
 			System.out.println("i am on right, index: "+index);
 			
@@ -159,7 +159,7 @@ public class WholeImage extends JPanel {
 			System.out.println("i am on left, index: "+index);
 			
 			int min = Math.max(b.getY(), next.getY());
-			int max = Math.min(b.getY()+b.getLY(), next.getY()+next.getLY());
+			int max = Math.min(b.getY()+b.getHeight(), next.getY()+next.getHeight());
 			
 			b.setDoor(b.getX(), (int)(Math.random()*(max-min)+min), false);
 			
@@ -173,7 +173,7 @@ public class WholeImage extends JPanel {
 			System.out.println("i am above, index: "+index);
 			
 			int min = Math.max(b.getX(), next.getX());
-			int max = Math.min(b.getX()+b.getLX(), next.getX()+next.getLX());
+			int max = Math.min(b.getX()+b.getWidth(), next.getX()+next.getWidth());
 			
 			b.setDoor((int)(Math.random()*(max-min)+min), b.getY(), true);
 			
@@ -187,7 +187,7 @@ public class WholeImage extends JPanel {
 			System.out.println("i am down, index: "+index);
 			
 			int min = Math.max(b.getX(), next.getX());
-			int max = Math.min(b.getX()+b.getLX(), next.getX()+next.getLX());
+			int max = Math.min(b.getX()+b.getWidth(), next.getX()+next.getWidth());
 			
 			b.setDoor((int)(Math.random()*(max-min)+min), next.getY(), true);
 			
@@ -281,8 +281,8 @@ public Block findNewPath(int last_block_index){
         	
 //        	g2.drawString(RoomGen.rooms.get(i).getTypeName()+" "+RoomGen.rooms.get(i).getPotentialDoorNum(), 
 //        
-//        			(RoomGen.rooms.get(i).getX())+(RoomGen.rooms.get(i).getLX()/2), 
-//        			(RoomGen.rooms.get(i).getY())+(RoomGen.rooms.get(i).getLY()/2));
+//        			(RoomGen.rooms.get(i).getX())+(RoomGen.rooms.get(i).getWidth()/2),
+//        			(RoomGen.rooms.get(i).getY())+(RoomGen.rooms.get(i).getHeight()/2));
         }
         //corridors
         for(int i =0;i<RoomGen.corridor.size();i++){
@@ -298,7 +298,7 @@ public Block findNewPath(int last_block_index){
 			g2.fill(path.get(i).getRec());
 			g2.setColor(Color.black);
 			g2.draw(path.get(i).getRec());
-			g2.drawString(i+"", path.get(i).getX()+(path.get(i).getLX()/2)+5, path.get(i).getY()+(path.get(i).getLY()/2)+10);
+			g2.drawString(i+"", path.get(i).getX()+(path.get(i).getWidth()/2)+5, path.get(i).getY()+(path.get(i).getHeight()/2)+10);
 			
 		}
 		
@@ -320,8 +320,8 @@ public Block findNewPath(int last_block_index){
         }
         for(int i = 0;i<RoomGen.all_elements.size();i++){
         	g2.drawString(RoomGen.all_elements.get(i).getCurrentDoorNum()+"/"+RoomGen.all_elements.get(i).getPotentialDoorNum(), 
-        		(RoomGen.all_elements.get(i).getX())+(RoomGen.all_elements.get(i).getLX()/2), 
-       			(RoomGen.all_elements.get(i).getY())+(RoomGen.all_elements.get(i).getLY()/2));
+        		(RoomGen.all_elements.get(i).getX())+(RoomGen.all_elements.get(i).getWidth()/2),
+       			(RoomGen.all_elements.get(i).getY())+(RoomGen.all_elements.get(i).getHeight()/2));
         }
     }
     
