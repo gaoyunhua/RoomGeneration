@@ -10,13 +10,10 @@ class Block {
 	private int width;
 	private int height;
 	private int index;
-	private int currentDoorNumber = 0;
-	private int potentialDoorNumber = 0;
+	private int currentDoorNumber;
+	private int potentialDoorNumber;
 
-	//save each side to simplify checking intersection on sides
-	// horizonLine = [x1, length]
-
-	private ArrayList<Block> blocksAround;
+	private ArrayList<Block> neighbouringBlocks;
 	private Rectangle rectangle;
 	private ArrayList<Line2D> doors;
 	
@@ -30,25 +27,28 @@ class Block {
 		this.width = width;
 		this.height = height;
 
+		init();
+	}
+
+	private void init() {
 		doors = new ArrayList<>();
 		rectangle = new Rectangle(x, y, width, height);
 		RoomGen.rec.add(rectangle);
 
+		currentDoorNumber = 0;
+		potentialDoorNumber = 0;
 	}
 
 	boolean inRange(int min, int max, int pointA, int pointB) {
-		boolean bool =  (pointA >= min && pointA + RoomGen.DOOR_SIZE <= max) ||
+		return (pointA >= min && pointA + RoomGen.DOOR_SIZE <= max) ||
 				(pointB - RoomGen.DOOR_SIZE >= min && pointB <= max);
-		return bool;
 	}
-
 
 	boolean isOnRight(Block block) {
 		return block.getX() == getX() + getWidth() &&
 				(inRange(getY(), getY() + getHeight(), block.getY(), block.getY() + block.getHeight()) ||
 				 inRange(block.getY(), block.getY() + block.getHeight(), getY(), getY() + getHeight()));
 	}
-
 
 	boolean isOnLeft(Block block){
 		return block.getX() + block.getWidth() == getX() &&
@@ -109,11 +109,11 @@ class Block {
 		currentDoorNumber++;
 	}
 	
-	void setDoor(int x, int y, boolean horizontal){
+	void setDoor(int x, int y, boolean horizontal) {
 		if(horizontal){
-			doors.add(new Line2D.Float(x, y,x+RoomGen.DOOR_SIZE,y));
+			doors.add(new Line2D.Float(x, y,x + RoomGen.DOOR_SIZE, y));
 		}else{
-			doors.add(new Line2D.Float(x, y,x,y+RoomGen.DOOR_SIZE));
+			doors.add(new Line2D.Float(x, y, x,y + RoomGen.DOOR_SIZE));
 		}
 	}
 
@@ -122,19 +122,18 @@ class Block {
 	}
 
 	public boolean isTouching(Block block) {
-		return (isOnRight(block) || isOnLeft(block) || isUp(block) || isDown(block));
+		return isOnRight(block) || isOnLeft(block) || isUp(block) || isDown(block);
 	}
 
 	public void generateBlocksAround() {
 
-		blocksAround = new ArrayList<>();
-		for (int i = 0; i < RoomGen.allElements.size(); i++) {
-			if (isTouching(RoomGen.allElements.get(i)) && !this.equals(RoomGen.allElements.get(i))) {
-				blocksAround.add(RoomGen.allElements.get(i));
-			} else {
+		neighbouringBlocks = new ArrayList<>();
+		for (Block block : RoomGen.allElements) {
+			if (isTouching(block) && !this.equals(block)) {
+				neighbouringBlocks.add(block);
 			}
 		}
-		RoomGen.neighbouringBlocks.put(this, blocksAround);
+		RoomGen.neighbouringBlocks.put(this, neighbouringBlocks);
 
 	}
 }

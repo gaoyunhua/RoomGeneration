@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
+import java.util.TimerTask;
 
 import javax.swing.JPanel;
 
@@ -20,6 +21,7 @@ public class WholeImage extends JPanel {
 
 
 	private static ArrayList<Block> path;
+	private static ArrayList<Block> pathAnimationList;
 	private static ArrayList<Line2D> doors;
 	private static ArrayList<Block> finishedDoors;
 	private static ArrayList<Block> unfinishedDoors;
@@ -33,11 +35,11 @@ public class WholeImage extends JPanel {
 		init();
 
 		Block base = new Block(BASE_BLOCK_X, BASE_BLOCK_Y, BASE_BLOCK_WIDTH, BASE_BLOCK_HEIGHT);
-		RoomGen.listUnfinished.add(base);
+		RoomGen.listUnfinishedBlocks.add(base);
 		
 
-		 for(int i = 0; i<RoomGen.listUnfinished.size(); i++){
-			 RoomGen.split(RoomGen.listUnfinished.get(i));
+		 for(int i = 0; i<RoomGen.listUnfinishedBlocks.size(); i++){
+			 RoomGen.split(RoomGen.listUnfinishedBlocks.get(i));
  		 }
 
 		 RoomGen.createCorridors();
@@ -80,10 +82,7 @@ public class WholeImage extends JPanel {
 //	        	}
 //	        }
 	}
-	
-	
-	
-	
+
 	
 	/*creating doors
 	 * 1. create path from random point until reaches block n with door full potential
@@ -108,15 +107,11 @@ public class WholeImage extends JPanel {
 		doors = new ArrayList<>();
 		finishedDoors = new ArrayList<>();
 		unfinishedDoors = new ArrayList<>();
+		pathAnimationList = new ArrayList<>();
 
 		count =0;
 		int countPathIndex = 0;
 	}
-
-
-
-
-
 
 	private void addDoor(Block currentBlock, Block next) {
 
@@ -246,17 +241,7 @@ public Block findNewPath(int lastBlockIndex){
 	}
 }	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	
     public void paintComponent(Graphics g) {
         super.paintComponent(g);  // fixes the immediate problem.
@@ -287,25 +272,6 @@ public Block findNewPath(int lastBlockIndex){
         //-----------------------------PATH-----------------------------------------------
 
 
-
-
-
-
-
-
-		//---------------------TIMER-----------------------------------
-//		Timer timer = new Timer();
-//		timer.scheduleAtFixedRate(new TimerTask(){
-//
-//			@Override
-//			public void run() {
-//				extendPath(countPathIndex, g2);
-//				countPathIndex++;
-//			}
-//		}, 10,1000 );
-		//----------------------TIMER END---------------------------
-
-
 		for(Block block : RoomGen.allElements) {
 			g2.setColor(Color.BLACK);
 			g2.draw(block.getRec());
@@ -319,25 +285,7 @@ public Block findNewPath(int lastBlockIndex){
         }
     }
 
-
-    private void extendPath(int i, Graphics2D g2) {
-
-		if(i > 0) {
-			g2.setColor(Color.DARK_GRAY);
-			g2.fill(path.get(i - 1).getRec());
-			g2.setColor(Color.BLACK);
-			g2.draw(path.get(i - 1).getRec());
-		}
-
-		g2.setColor(Color.GREEN);
-		g2.fill(path.get(i).getRec());
-		g2.setColor(Color.black);
-		g2.draw(path.get(i).getRec());
-
-
-	}
-
-    public static void clearAll(){
+    static void clearAll(){
   
     	path.clear();
     	doors.clear();

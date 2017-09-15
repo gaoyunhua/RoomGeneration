@@ -30,8 +30,8 @@ public class RoomGen {
 	
 	static ArrayList<Rectangle> rec;
 	static ArrayList<Corridor> corridors;
-	static ArrayList<Block> listUnfinished;
-	static ArrayList<Room> listFinished;
+	static ArrayList<Block> listUnfinishedBlocks;
+	static ArrayList<Room> listFinishedBlocks;
 	static ArrayList<Room> rooms;
 	static ArrayList<Block> allElements;
 	static HashMap<Block, ArrayList<Block>> neighbouringBlocks;
@@ -76,8 +76,8 @@ public class RoomGen {
 
 		rec = new ArrayList<>();
 		corridors = new ArrayList<>();
-		listUnfinished = new ArrayList<>();
-		listFinished = new ArrayList<>();
+		listUnfinishedBlocks = new ArrayList<>();
+		listFinishedBlocks = new ArrayList<>();
 		rooms = new ArrayList<>();
 		allElements = new ArrayList<>();
 		neighbouringBlocks = new HashMap<>();
@@ -94,7 +94,7 @@ public class RoomGen {
 		if ((currentBlock.getWidth() <= MAX_ROOM_WIDTH && currentBlock.getHeight() <= ROOM_HEIGHT_MAX) &&
 		    (currentBlock.getWidth() >= ROOM_WIDTH_MIN && currentBlock.getHeight() >= ROOM_HEIGHT_MIN)) {
 
-			listFinished.add(new Room(currentBlock));
+			listFinishedBlocks.add(new Room(currentBlock));
 			return currentBlock;
 
 		} else {
@@ -117,7 +117,7 @@ public class RoomGen {
 				Block blockD = new Block(currentBlock.getX(), currentBlock.getY() + y, currentBlock.getWidth(),
 						currentBlock.getHeight() - y);
 
-				listUnfinished.add(blockD);
+				listUnfinishedBlocks.add(blockD);
 
 				return split(blockU);
 
@@ -131,7 +131,7 @@ public class RoomGen {
 				Block blockR = new Block(currentBlock.getX() + x, currentBlock.getY(), currentBlock.getWidth() - x,
 						currentBlock.getHeight());
 
-				listUnfinished.add(blockR);
+				listUnfinishedBlocks.add(blockR);
 
 				return split(blockL);
 			default:
@@ -144,7 +144,7 @@ public class RoomGen {
 
 	static void createCorridors(){
 		
-		for(Block currentBlock : listFinished){
+		for(Block currentBlock : listFinishedBlocks){
 
 			final int currentX = currentBlock.getX();
 			final int currentY = currentBlock.getY();
@@ -199,8 +199,8 @@ public class RoomGen {
 	static void clearAll(){
 		rec.clear();
 		corridors.clear();
-		listUnfinished.clear();
-		listFinished.clear();
+		listUnfinishedBlocks.clear();
+		listFinishedBlocks.clear();
 		rooms.clear();
 		allElements.clear();
 		neighbouringBlocks.clear();
