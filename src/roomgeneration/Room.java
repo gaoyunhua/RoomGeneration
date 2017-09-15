@@ -1,3 +1,5 @@
+package roomgeneration;
+
 public class Room extends Block{
 
 	private int room_type = -1;

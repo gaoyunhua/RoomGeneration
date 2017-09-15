@@ -1,3 +1,4 @@
+package roomgeneration;
 
 public class Corridor extends Block{
 	

@@ -1,28 +1,38 @@
+package roomgeneration;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.swing.JPanel;
 
 
 public class WholeImage extends JPanel {
-	
-	//private Block mainBlock;
-	private static ArrayList<Block> path = new ArrayList<>();
-	private static ArrayList<Line2D> doors = new ArrayList<>();
-	private static ArrayList<Block> finishedDoors = new ArrayList<>();
-	private static ArrayList<Block> unfinishedDoors = new ArrayList<>();
+
+	private static final int BASE_BLOCK_X = 20;
+	private static final int BASE_BLOCK_Y = 20;
+	private static final int BASE_BLOCK_WIDTH = 800;
+	private static final int BASE_BLOCK_HEIGHT = 600;
+
+
+
+	private static ArrayList<Block> path;
+	private static ArrayList<Line2D> doors;
+	private static ArrayList<Block> finishedDoors;
+	private static ArrayList<Block> unfinishedDoors;
+
 	static int newStart;
-	static int count =0;
-	private  static int countPathIndex = 0;
+	static int count;
+	private  static int countPathIndex;
 	
 	public WholeImage(){
-		Block base = new Block(20, 20, 800, 600);
+
+		init();
+
+		Block base = new Block(BASE_BLOCK_X, BASE_BLOCK_Y, BASE_BLOCK_WIDTH, BASE_BLOCK_HEIGHT);
 		RoomGen.listUnfinished.add(base);
 		
 
@@ -63,7 +73,7 @@ public class WholeImage extends JPanel {
 	        
 	        
 //	        while(unfinishedDoors.size()>0){
-//	        	Block a = createPath(findNewPath(path.size()-2));
+//	        	roomgeneration.Block a = createPath(findNewPath(path.size()-2));
 //	        	count++;
 //	        	if(count == 100){
 //	        		break;
@@ -86,13 +96,28 @@ public class WholeImage extends JPanel {
 	 * 1.
 	 * createPath(random block b){
 	 * 	
-	 *    Block next = new Block
+	 *    roomgeneration.Block next = new roomgeneration.Block
 	 * }
 	 * 
 	 */
 	
 	
-	
+
+	private void init() {
+		path = new ArrayList<>();
+		doors = new ArrayList<>();
+		finishedDoors = new ArrayList<>();
+		unfinishedDoors = new ArrayList<>();
+
+		count =0;
+		int countPathIndex = 0;
+	}
+
+
+
+
+
+
 	private void addDoor(Block currentBlock, Block next) {
 
 		if(currentBlock.isOnRight(next) || currentBlock.isOnLeft(next)) {
