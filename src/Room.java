@@ -6,15 +6,19 @@ public class Room extends Block{
 	public Room(int x,int y, int lengthX,int lengthY){
 		super(x, y, lengthX, lengthY);
 	}
+
 	public Room(Block b){
 		super(b.getX(),b.getY(),b.getWidth(),b.getHeight());
 	}
+
 	public void chooseType(){
 		room_type = (int) (Math.random()*(4));
 	}
+
 	public int getType(){
 		return room_type;
 	}
+
 	public String getTypeName(){
 		String name = "";
 		switch(room_type){
