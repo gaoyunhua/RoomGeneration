@@ -14,9 +14,9 @@ class Block {
 	private int potentialDoorNumber;
 
 	private ArrayList<Block> neighbouringBlocks;
+	private ArrayList<Block> accesibleNeighbouringBlocks;
 	private Rectangle rectangle;
 	private ArrayList<Line2D> doors;
-//	private ArrayList<Block> availableNeighbouringBlocks;
 	
 	private final int DOOR_NUMBER_MIN = 1;
 	private final int DOOR_NUMBER_MAX = 5;
@@ -33,6 +33,7 @@ class Block {
 
 	private void init() {
 		doors = new ArrayList<>();
+		accesibleNeighbouringBlocks = new ArrayList<>();
 		rectangle = new Rectangle(x, y, width, height);
 		RoomGen.rec.add(rectangle);
 
@@ -147,5 +148,13 @@ class Block {
 			}
 		}
 		return availableNeighbouringBlocks;
+	}
+
+	ArrayList<Block> getAccesibleNeighbouringBlocks() {
+    	return accesibleNeighbouringBlocks;
+	}
+
+	void addAccesibleNeighbouringBlock(Block block) {
+    	accesibleNeighbouringBlocks.add(block);
 	}
 }

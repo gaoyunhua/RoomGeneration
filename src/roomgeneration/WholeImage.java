@@ -29,6 +29,7 @@ public class WholeImage extends JPanel {
 	private static final Color COLOR_OF_ANIMATED_PATH = Color.GREEN;
 	private static final Color COLOR_OF_CURRENT_BLOCK = Color.DARK_GRAY;
 	private static final Color COLOR_OF_UNREACHABLE_BLOCKS = Color.BLUE;
+	private static Color colorOfConnectedComponents = Color.blue;
 
 
 	public Timer timer;
@@ -39,6 +40,11 @@ public class WholeImage extends JPanel {
 	private ArrayList<Block> finishedDoors;
 	private ArrayList<Block> unfinishedDoors;
 	private ArrayList<Block> unreachableBlocks;
+	private ArrayList<Block> connectingRooms = new ArrayList<>();
+	private ArrayList<Block> connectingRooms2 = new ArrayList<>();
+
+	private ArrayList<Block> test = new ArrayList<>();
+	private ArrayList<Block> test2 = new ArrayList<>();
 
 	private Block currentBlockAnimation;
 	private LinkedList<Integer> pathIndexes;
@@ -105,11 +111,40 @@ public class WholeImage extends JPanel {
 				block.addDoor();
 				next.addDoor();
 
+
 			}
 
 		//-----------------------------------PATH----------------------------
 
 		pathIndexesStore = new LinkedList<>(pathIndexes);
+
+		//-----------------------CONNECTING LOOPS-----------------------------
+		connectLoops(RoomGen.allElements.get(0));
+		while(test.size() != RoomGen.allElements.size()) {
+			ArrayList<Block> listOfUnfinished = new ArrayList<>(RoomGen.allElements);
+			listOfUnfinished.removeAll(test);
+			boolean nextFound = false;
+			Block next = null;
+			for(Block block : test) {
+				for(Block neighbour : RoomGen.neighbouringBlocks.get(block)) {
+					if(!test.contains(neighbour)) {
+						addDoor(block, neighbour);
+						connectingRooms2.add(block);
+						next = neighbour;
+						block.addDoor();
+						neighbour.addDoor();
+						nextFound = true;
+						break;
+					}
+				}
+				if(nextFound) break;
+			}
+			connectingRooms.add(next);
+			connectLoops(next);
+		}
+
+		connectLoops(RoomGen.allElements.get(0));
+		//-----------------------CONNECTING LOOPS-----------------------------
 	}
 
 	private void init() {
@@ -123,6 +158,9 @@ public class WholeImage extends JPanel {
 	}
 
 	private void addDoor(Block currentBlock, Block next) {
+
+		currentBlock.addAccesibleNeighbouringBlock(next);
+		next.addAccesibleNeighbouringBlock(currentBlock);
 
 		if(currentBlock.isOnRight(next) || currentBlock.isOnLeft(next)) {
 			//(int)(Math.random() * (max - min) + min)
@@ -249,6 +287,19 @@ public class WholeImage extends JPanel {
 		}
 	}
 
+	void connectLoops(Block currentBlock) {
+		test.add(currentBlock);
+
+		if(test.containsAll(currentBlock.getAccesibleNeighbouringBlocks())) {
+			return;
+		}
+
+		for(Block block : currentBlock.getAccesibleNeighbouringBlocks()) {
+			if(!test.contains(block)) connectLoops(block);
+		}
+ 		return;
+	}
+
     public void paintComponent(Graphics g) {
         super.paintComponent(g);  // fixes the immediate problem.
         Graphics2D g2 = (Graphics2D) g;
@@ -299,6 +350,7 @@ public class WholeImage extends JPanel {
 				revalidate();
 				setVisible(true);
             }else{
+//				connectLoops(currentBlockAnimation);
                 timer.stop();
             }
             repaint();
