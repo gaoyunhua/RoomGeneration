@@ -47,7 +47,7 @@ public class RoomGen {
 	
 	public static void main(String[] args) {
 
-		frame = new JFrame("roomgeneration.Room Generation");
+		frame = new JFrame("Room Generation");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(DEFAULT_FRAME_WIDTH, DEFAULT_FRAME_HEIGHT);
 
@@ -92,7 +92,6 @@ public class RoomGen {
 		restart.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//image.getTimer().restart();
 				image.restartAnimation();
 			}
 		});

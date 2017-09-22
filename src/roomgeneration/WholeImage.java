@@ -28,6 +28,8 @@ public class WholeImage extends JPanel {
 	private static final Color COLOR_OF_POTENTIAL_PATH = Color.PINK;
 	private static final Color COLOR_OF_ANIMATED_PATH = Color.GREEN;
 	private static final Color COLOR_OF_CURRENT_BLOCK = Color.DARK_GRAY;
+	private static final Color COLOR_OF_UNREACHABLE_BLOCKS = Color.BLUE;
+
 
 	public Timer timer;
 
@@ -36,15 +38,11 @@ public class WholeImage extends JPanel {
 	private ArrayList<Line2D> doors;
 	private ArrayList<Block> finishedDoors;
 	private ArrayList<Block> unfinishedDoors;
-	private ArrayList<Block> pathEnd = new ArrayList<>();
-	private ArrayList<Block> unreachableBlocks = new ArrayList<>();
+	private ArrayList<Block> unreachableBlocks;
 
 	private Block currentBlockAnimation;
 	private LinkedList<Integer> pathIndexes;
 	private LinkedList<Integer> pathIndexesStore;
-//	ArrayList<Block> rest;
-	int count;
-//	private boolean stop;
 	
 	public WholeImage(){
 
@@ -84,10 +82,8 @@ public class WholeImage extends JPanel {
 		//----------------------------------------PATH-------------------------
 	        Block b = createPath(RoomGen.allElements.get((int)(Math.random()*RoomGen.allElements.size())));
 	        pathIndexes.add(b.getIndex());
-	        pathEnd.add(b);
 
-	        int count = 0;
-	        while(!unfinishedDoors.isEmpty()) { //&& count <= 10) {
+	        while(!unfinishedDoors.isEmpty()) {
 	        	Block currentBlock = findNewPath();
 
 	        	if(currentBlock.getAvailableNeighbouringBlocks().size() > 0) {
@@ -100,7 +96,6 @@ public class WholeImage extends JPanel {
 						unreachableBlocks.add(currentBlock);
 	        		}
 				}
-	        	count++;
 			}
 			for(Block block : unreachableBlocks) {
 	        	Block next = RoomGen.neighbouringBlocks.get(block).get(
@@ -113,27 +108,9 @@ public class WholeImage extends JPanel {
 			}
 
 		//-----------------------------------PATH----------------------------
+
 		pathIndexesStore = new LinkedList<>(pathIndexes);
 	}
-
-	
-	/*creating doors
-	 * 1. create path from random point until reaches block n with door full potential
-	 * 2. go back on block n-1
-	 * 3. if(block n-1 reached full potential) repeat 2.
-	 *    else createPath(n-1)
-	 * 4.if all block has full potential stop
-	 * 
-	 * 
-	 * 1.
-	 * createPath(random block b){
-	 * 	
-	 *    roomgeneration.Block next = new roomgeneration.Block
-	 * }
-	 * 
-	 */
-
-
 
 	private void init() {
 		path = new ArrayList<>();
@@ -142,8 +119,7 @@ public class WholeImage extends JPanel {
 		unfinishedDoors = new ArrayList<>();
 		pathAnimationList = new ArrayList<>();
 		pathIndexes = new LinkedList<>();
-
-		count =0;
+		unreachableBlocks = new ArrayList<>();
 	}
 
 	private void addDoor(Block currentBlock, Block next) {
@@ -266,12 +242,12 @@ public class WholeImage extends JPanel {
 	//find start block for a new path
 	public Block findNewPath(){
 
-	if(!unfinishedDoors.isEmpty()) {
-		return unfinishedDoors.get((int) (Math.random() * unfinishedDoors.size()));
-	} else {
-		return RoomGen.allElements.get(0);
+		if(!unfinishedDoors.isEmpty()) {
+			return unfinishedDoors.get((int) (Math.random() * unfinishedDoors.size()));
+		} else {
+			return RoomGen.allElements.get(0);
+		}
 	}
-}	
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);  // fixes the immediate problem.
@@ -297,7 +273,7 @@ public class WholeImage extends JPanel {
 			g2.fill(currentBlockAnimation.getRec());
 		}
 
-		g2.setColor(Color.blue);
+		g2.setColor(COLOR_OF_UNREACHABLE_BLOCKS);
 		for(Block block : unreachableBlocks) {
 			g2.fill(block.getRec());
 		}
@@ -323,7 +299,6 @@ public class WholeImage extends JPanel {
 				revalidate();
 				setVisible(true);
             }else{
-//                stop = true;
                 timer.stop();
             }
             repaint();
