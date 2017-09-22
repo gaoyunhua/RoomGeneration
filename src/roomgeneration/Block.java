@@ -16,6 +16,7 @@ class Block {
 	private ArrayList<Block> neighbouringBlocks;
 	private Rectangle rectangle;
 	private ArrayList<Line2D> doors;
+//	private ArrayList<Block> availableNeighbouringBlocks;
 	
 	private final int DOOR_NUMBER_MIN = 1;
 	private final int DOOR_NUMBER_MAX = 5;
@@ -117,15 +118,15 @@ class Block {
 		}
 	}
 
-	public ArrayList<Line2D> getDoors(){
+    ArrayList<Line2D> getDoors(){
 		return doors;
 	}
 
-	public boolean isTouching(Block block) {
+	boolean isTouching(Block block) {
 		return isOnRight(block) || isOnLeft(block) || isUp(block) || isDown(block);
 	}
 
-	public void generateBlocksAround() {
+	void generateBlocksAround() {
 
 		neighbouringBlocks = new ArrayList<>();
 		for (Block block : RoomGen.allElements) {
@@ -135,5 +136,16 @@ class Block {
 		}
 		RoomGen.neighbouringBlocks.put(this, neighbouringBlocks);
 
+	}
+
+	ArrayList<Block> getAvailableNeighbouringBlocks() {
+    	ArrayList<Block> availableNeighbouringBlocks = new ArrayList<>();
+
+    	for(Block block : RoomGen.neighbouringBlocks.get(this)) {
+    		if(block.getCurrentDoorNum() < block.getPotentialDoorNum()) {
+    			availableNeighbouringBlocks.add(block);
+			}
+		}
+		return availableNeighbouringBlocks;
 	}
 }
