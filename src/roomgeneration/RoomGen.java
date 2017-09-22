@@ -42,37 +42,14 @@ public class RoomGen {
 	
 	public static void main(String[] args) {
 
-		init();
-
+		frame = new JFrame("roomgeneration.Room Generation");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(DEFAULT_FRAME_WIDTH, DEFAULT_FRAME_HEIGHT);
-		
-		restart.setSize(BUTTON_RESTART_WIDTH, BUTTON_RESTART_HEIGHT);
-		restart.setLocation(BUTTON_RESTART_X, BUTTON_RESTART_Y);
 
-		frame.add(restart);
-		frame.add(image);
-		
-		restart.addActionListener(new ActionListener(){
-
-			public void actionPerformed(ActionEvent arg0) {
-				
-				image.removeAll();
-				clearAll();
-				WholeImage.clearAll();
-				image = new WholeImage();
-				image.revalidate();
-				frame.repaint();
-			}});
-		
-		frame.validate();
-		frame.getContentPane();
-		frame.repaint();
-		frame.setVisible(true);
-
+		init(true);
 	}
 
-	private static void init() {
+	private static void init(boolean isFirstRun) {
 
 		rec = new ArrayList<>();
 		corridors = new ArrayList<>();
@@ -82,9 +59,33 @@ public class RoomGen {
 		allElements = new ArrayList<>();
 		neighbouringBlocks = new HashMap<>();
 
-		frame = new JFrame("roomgeneration.Room Generation");
 		restart = new JButton("Restart");
 		image = new WholeImage();
+
+		image.animate();
+
+		restart.setSize(BUTTON_RESTART_WIDTH, BUTTON_RESTART_HEIGHT);
+		restart.setLocation(BUTTON_RESTART_X, BUTTON_RESTART_Y);
+
+		frame.add(restart);
+		frame.add(image);
+
+		restart.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent arg0) {
+
+				//image.removeAll();
+				clearAll();
+			//	WholeImage.clearAll();
+			//	image = new WholeImage();
+			//	image.revalidate();
+				frame.repaint();
+			}});
+
+		frame.validate();
+		frame.getContentPane();
+		frame.repaint();
+		frame.setVisible(true);
 	}
 	
 	static Block split(Block currentBlock) {
@@ -204,6 +205,11 @@ public class RoomGen {
 		rooms.clear();
 		allElements.clear();
 		neighbouringBlocks.clear();
+		frame.remove(restart);
+		frame.remove(image);
+		frame.repaint();
+
+		init(false);
 		
 	}
 	}

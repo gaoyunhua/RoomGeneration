@@ -4,9 +4,11 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.ActionListener;
 import java.awt.geom.Line2D;
-import java.util.ArrayList;
-import java.util.TimerTask;
+import java.util.*;
+
+import javax.swing.Timer;
 
 import javax.swing.JPanel;
 
@@ -18,17 +20,23 @@ public class WholeImage extends JPanel {
 	private static final int BASE_BLOCK_WIDTH = 800;
 	private static final int BASE_BLOCK_HEIGHT = 600;
 
+	public Timer timer;
 
+	private ArrayList<Block> path;
+	private ArrayList<Block> pathAnimationList;
+	private ArrayList<Line2D> doors;
+	private ArrayList<Block> finishedDoors;
+	private ArrayList<Block> unfinishedDoors;
+	private ArrayList<Block> pathEnd = new ArrayList<>();
 
-	private static ArrayList<Block> path;
-	private static ArrayList<Block> pathAnimationList;
-	private static ArrayList<Line2D> doors;
-	private static ArrayList<Block> finishedDoors;
-	private static ArrayList<Block> unfinishedDoors;
-
-	static int newStart;
-	static int count;
-	private  static int countPathIndex;
+	private Block currentBlockAnimation;
+	private LinkedList<Integer> pathIndexes;
+	private LinkedList<Integer> pathIndexesList;
+	ArrayList<Block> rest = new ArrayList<>(RoomGen.allElements);
+	private int newStart;
+	int count;
+	private int countPathIndex;
+	int runs = 0;
 	
 	public WholeImage(){
 
@@ -69,18 +77,20 @@ public class WholeImage extends JPanel {
 
 		//----------------------------------------PATH-------------------------
 	        Block b = createPath(RoomGen.allElements.get((int)(Math.random()*RoomGen.allElements.size())));
-	        newStart = path.size()-2;
-	        Block a = createPath(findNewPath(newStart));
-	        //-----------------------------------PATH----------------------------
-	        
-	        
-//	        while(unfinishedDoors.size()>0){
-//	        	roomgeneration.Block a = createPath(findNewPath(path.size()-2));
-//	        	count++;
-//	        	if(count == 100){
-//	        		break;
-//	        	}
-//	        }
+	        pathIndexes.add(b.getIndex());
+	        pathEnd.add(b);
+//	        newStart = path.size()-2;
+	        Block a = createPath(findNewPath());
+			pathIndexes.add(a.getIndex());
+			pathEnd.add(a);
+
+//			for(int i = 0; i<20; i++) {
+//				newStart = path.size()-2;
+//				Block a = createPath(findNewPath(newStart));
+//				pathIndexes.add(a.getIndex());
+//				pathEnd.add(a);
+//			}
+		//-----------------------------------PATH----------------------------
 	}
 
 	
@@ -108,6 +118,9 @@ public class WholeImage extends JPanel {
 		finishedDoors = new ArrayList<>();
 		unfinishedDoors = new ArrayList<>();
 		pathAnimationList = new ArrayList<>();
+
+		pathIndexes = new LinkedList<>();
+		pathIndexesList = new LinkedList<>();
 
 		count =0;
 		int countPathIndex = 0;
@@ -160,11 +173,15 @@ public class WholeImage extends JPanel {
 	//creating path with doors
 	public Block createPath(Block currentBlock){
 
-		int indexOfNeighbouringBlock = (int) (Math.random()*RoomGen.neighbouringBlocks.get(currentBlock).size());
+		int indexOfNeighbouringBlock = (int) (Math.random() * RoomGen.neighbouringBlocks.get(currentBlock).size());
 		int size = RoomGen.neighbouringBlocks.get(currentBlock).size();
-		
+		pathIndexes.add(currentBlock.getIndex());
+
 		if(!path.contains(currentBlock)){
 			path.add(currentBlock);
+			pathIndexesList.add(currentBlock.getIndex());
+		} else {
+			pathIndexes.add(currentBlock.getIndex());
 		}
 		
 		//set the next index to make sure that elements of path are distinct
@@ -214,13 +231,19 @@ public class WholeImage extends JPanel {
 		if(next.getPotentialDoorNum() == next.getCurrentDoorNum()){
 			finishedDoors.add(next);
 			path.add(next);
+			pathIndexes.add(next.getIndex());
 			
 			for(int i = 0; i< unfinishedDoors.size(); i++){
 				if(unfinishedDoors.get(i).equals(next)){
 					unfinishedDoors.remove(i);
 				}
 			}
-			return next;
+//			return next;
+			if(currentBlock.getCurrentDoorNum() == currentBlock.getPotentialDoorNum() && path.size() - 3 > 0) {
+				return createPath(path.get(path.size() - 3));
+			} else {
+				return createPath(currentBlock);
+			}
 		}
 		//otherwise the path continues
 		else{
@@ -231,13 +254,21 @@ public class WholeImage extends JPanel {
 	
 
 //find start block for a new path	
-public Block findNewPath(int lastBlockIndex){
+public Block findNewPath(){
 
-	if(path.get(lastBlockIndex).getPotentialDoorNum() == path.get(lastBlockIndex).getCurrentDoorNum()){
-		if(lastBlockIndex <= 0) return path.get((int)(Math.random()*path.size()));
-		else return findNewPath(lastBlockIndex -1);
-	}else{
-		return path.get(lastBlockIndex);
+//	if(path.get(lastBlockIndex).getPotentialDoorNum() == path.get(lastBlockIndex).getCurrentDoorNum()){
+//		if(lastBlockIndex <= 0) {
+	rest.removeAll(path);
+	//			return path.get((int) (Math.random() * rest.size()));
+//		}
+//		else return findNewPath(lastBlockIndex - 1);
+//	}else{
+//		return path.get(lastBlockIndex);
+//	}
+	if(!rest.isEmpty()) {
+		return rest.get((int) (Math.random() * rest.size()));
+	} else {
+		return RoomGen.allElements.get(0);
 	}
 }	
 	
@@ -255,20 +286,26 @@ public Block findNewPath(int lastBlockIndex){
 
 
         //-----------------------------------------PATH----------------------------------------------------
+
+		g2.setColor(Color.pink);
+		for(Block block : path) {
+			g2.fill(block.getRec());
+		}
         g2.setColor(Color.GREEN);
-		for(int i = 0;i<path.size();i++){
+		for(int i = 0;i<pathAnimationList.size();i++){
 
 		    g2.setColor(Color.GREEN);
-			g2.fill(path.get(i).getRec());
+			g2.fill(pathAnimationList.get(i).getRec());
 
 		}
-
-        g2.setColor(Color.pink);
-        g2.fill(path.get(newStart).getRec());
-
-
-		g2.setColor(Color.DARK_GRAY);
-		g2.fill(path.get(path.size()-1).getRec());
+		for(Block block : pathEnd) {
+			g2.setColor(Color.yellow);
+			g2.fill(block.getRec());
+		}
+		if(currentBlockAnimation != null) {
+			g2.setColor(Color.DARK_GRAY);
+			g2.fill(currentBlockAnimation.getRec());
+		}
         //-----------------------------PATH-----------------------------------------------
 
 
@@ -285,14 +322,29 @@ public Block findNewPath(int lastBlockIndex){
         }
     }
 
-    static void clearAll(){
-  
-    	path.clear();
-    	doors.clear();
-    	finishedDoors.clear();
-    	unfinishedDoors.clear();
-    	newStart = 0;
-    	count = 0;
-    }
-        
+	boolean stop = false;
+	public void animate() {
+		stop = false;
+		ActionListener listener = e -> {
+            if(!pathIndexes.isEmpty()) {
+				System.out.println(countPathIndex);
+				currentBlockAnimation = RoomGen.allElements.get(pathIndexes.removeFirst());
+				System.out.println("path indexes: " + pathIndexes);
+				pathAnimationList.add(currentBlockAnimation);
+				countPathIndex++;
+				revalidate();
+				setVisible(true);
+
+            }else{
+                stop = true;
+            }
+            repaint();
+        };
+		timer = new Timer(100, listener);
+
+		timer.start();
+		if(stop) {
+			timer.stop();
+		}
+	}
 }
