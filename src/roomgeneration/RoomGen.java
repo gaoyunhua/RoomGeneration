@@ -1,22 +1,26 @@
 package roomgeneration;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
+import javax.swing.*;
 
 public class RoomGen {
 
 	private static final int DEFAULT_FRAME_WIDTH = 900;
 	private static final int DEFAULT_FRAME_HEIGHT = 700;
 
-	private static final int BUTTON_RESTART_WIDTH = 90;
+	private static final int BUTTON_NEW_MAP_WIDTH = 200;
+	private static final int BUTTON_NEW_MAP_HEIGHT = 30;
+	private static final int BUTTON_NEW_MAP_X = 20;
+	private static final int BUTTON_NEW_MAP_Y = 630;
+
+	private static final int BUTTON_RESTART_WIDTH = 200;
 	private static final int BUTTON_RESTART_HEIGHT = 30;
-	private static final int BUTTON_RESTART_X = 20;
+	private static final int BUTTON_RESTART_X = 300;
 	private static final int BUTTON_RESTART_Y = 630;
 
 	final static int CORRIDOR_SIZE = 8;
@@ -37,6 +41,7 @@ public class RoomGen {
 	static HashMap<Block, ArrayList<Block>> neighbouringBlocks;
 	
 	private static JFrame frame;
+	private static JButton newMap;
 	private static JButton restart;
 	private static WholeImage image;
 	
@@ -46,10 +51,10 @@ public class RoomGen {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(DEFAULT_FRAME_WIDTH, DEFAULT_FRAME_HEIGHT);
 
-		init(true);
+		init();
 	}
 
-	private static void init(boolean isFirstRun) {
+	private static void init() {
 
 		rec = new ArrayList<>();
 		corridors = new ArrayList<>();
@@ -59,28 +64,38 @@ public class RoomGen {
 		allElements = new ArrayList<>();
 		neighbouringBlocks = new HashMap<>();
 
-		restart = new JButton("Restart");
+		newMap = new JButton("Create New Map");
+		restart = new JButton("Restart Map");
 		image = new WholeImage();
 
 		image.animate();
 
+		newMap.setSize(BUTTON_NEW_MAP_WIDTH, BUTTON_NEW_MAP_HEIGHT);
+		newMap.setLocation(BUTTON_NEW_MAP_X, BUTTON_NEW_MAP_Y);
+
 		restart.setSize(BUTTON_RESTART_WIDTH, BUTTON_RESTART_HEIGHT);
 		restart.setLocation(BUTTON_RESTART_X, BUTTON_RESTART_Y);
 
-		frame.add(restart);
+
+		image.add(newMap);
+		image.add(restart);
+		image.setLayout(null);
 		frame.add(image);
 
-		restart.addActionListener(new ActionListener(){
+		newMap.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent arg0) {
 
-				//image.removeAll();
 				clearAll();
-			//	WholeImage.clearAll();
-			//	image = new WholeImage();
-			//	image.revalidate();
 				frame.repaint();
 			}});
+		restart.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//image.getTimer().restart();
+				image.restartAnimation();
+			}
+		});
 
 		frame.validate();
 		frame.getContentPane();
@@ -205,11 +220,11 @@ public class RoomGen {
 		rooms.clear();
 		allElements.clear();
 		neighbouringBlocks.clear();
-		frame.remove(restart);
+		frame.remove(newMap);
 		frame.remove(image);
 		frame.repaint();
 
-		init(false);
+		init();
 		
 	}
 	}
